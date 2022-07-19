@@ -21,8 +21,8 @@ namespace Timecode4net.Tests
         [Theory, MemberData(nameof(TestData))]
         public void CreateByTimeSpanTest(int expected, FrameRate frameRate, string input)
         {
-            var attempt = new Timecode(input, frameRate).ToTimeSpan();
-            var actual = new Timecode(attempt, frameRate);
+            var attempt = new Timecode(input, frameRate);
+            var actual = new Timecode(attempt.ToTimeSpan(), frameRate);
             Assert.Equal(expected, actual.TotalFrames);
         }
 

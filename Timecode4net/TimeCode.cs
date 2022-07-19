@@ -8,6 +8,8 @@ namespace Timecode4net
         private const int SecondsInHour = 3600;
         private const int SecondsInMinute = 60;
         private const int MillisecondsInSecond = 1000;
+        private const int HoursInDay = 24;
+        private const double Imposter = 0.066666f;
 
         private const string TimeCodePattern = @"^(?<hours>[0-2][0-9]):(?<minutes>[0-5][0-9]):(?<seconds>[0-5][0-9])[:|;|\.](?<frames>[0-9]{2,3})$";
 
@@ -20,21 +22,17 @@ namespace Timecode4net
         public int Frames { get; private set; }
 
 
-
         private void UpdateByTotalFrames()
         {
-            const int secondsInHour = 3600;
-            const int secondsInMinutes = 60;
-
-            var frameCount = this.TotalFrames;
+            var frameCount = TotalFrames;
             if (IsDropFrameRate)
             {
-                var fps = this.FrameRate.Rate;
-                var dropFrames = Math.Round(fps * 0.066666, MidpointRounding.AwayFromZero);
-                var framesPerHour = Math.Round(fps * secondsInHour, MidpointRounding.AwayFromZero);
-                var framesPer24H = framesPerHour * 24;
-                var framesPer10M = Math.Round(fps * secondsInMinutes * 10, MidpointRounding.AwayFromZero);
-                var framesPerMin = Math.Round(fps * secondsInMinutes, MidpointRounding.AwayFromZero);
+                var fps = FrameRate.Rate;
+                var dropFrames = Math.Round(fps * Imposter, MidpointRounding.AwayFromZero);
+                var framesPerHour = Math.Round(fps * SecondsInHour, MidpointRounding.AwayFromZero);
+                var framesPer24H = framesPerHour * HoursInDay;
+                var framesPer10M = Math.Round(fps * SecondsInMinute * 10, MidpointRounding.AwayFromZero);
+                var framesPerMin = Math.Round(fps * SecondsInMinute, MidpointRounding.AwayFromZero);
 
                 frameCount %= (int)framesPer24H;
                 if (frameCount < 0)
@@ -53,22 +51,22 @@ namespace Timecode4net
                     frameCount += (int)(dropFrames * 9 * d);
                 }
 
-                this.Hours = (int)Math.Floor(Math.Floor(Math.Floor(frameCount / (double)FrameRate.RateRounded) / secondsInMinutes) / secondsInMinutes);
-                this.Minutes = (int)Math.Floor(Math.Floor(frameCount / (double)FrameRate.RateRounded) / secondsInMinutes) % secondsInMinutes;
-                this.Seconds = (int)Math.Floor(frameCount / (double)FrameRate.RateRounded) % secondsInMinutes;
-                this.Frames = (int) (frameCount % FrameRate.RateRounded);
+                Hours = (int)Math.Floor(Math.Floor(Math.Floor(frameCount / (double)FrameRate.RateRounded) / SecondsInMinute) / SecondsInMinute);
+                Minutes = (int)Math.Floor(Math.Floor(frameCount / (double)FrameRate.RateRounded) / SecondsInMinute) % SecondsInMinute;
+                Seconds = (int)Math.Floor(frameCount / (double)FrameRate.RateRounded) % SecondsInMinute;
+                Frames = frameCount % FrameRate.RateRounded;
             }
             else
             {
-                this.Hours = (int) (frameCount / (secondsInHour * FrameRate.RateRounded));
-                if (this.Hours > 23)
+                Hours = frameCount / (SecondsInHour * FrameRate.RateRounded);
+                if (Hours > 23)
                 {
-                    this.Hours %= 24;
-                    frameCount -= (int) (23 * secondsInHour * FrameRate.RateRounded);
+                    Hours %= 24;
+                    frameCount -= 23 * SecondsInHour * FrameRate.RateRounded;
                 }
-                this.Minutes = (int) (frameCount % (secondsInHour * FrameRate.RateRounded) / (secondsInMinutes * FrameRate.RateRounded));
-                this.Seconds = (int) (frameCount % (secondsInHour * FrameRate.RateRounded) % (secondsInMinutes * FrameRate.RateRounded) / FrameRate.RateRounded);
-                this.Frames = (int) (frameCount % (secondsInHour * FrameRate.RateRounded) % (secondsInMinutes * FrameRate.RateRounded) % FrameRate.RateRounded);
+                Minutes = frameCount % (SecondsInHour * FrameRate.RateRounded) / (SecondsInMinute * FrameRate.RateRounded);
+                Seconds = frameCount % (SecondsInHour * FrameRate.RateRounded) % (SecondsInMinute * FrameRate.RateRounded) / FrameRate.RateRounded;
+                Frames = frameCount % (SecondsInHour * FrameRate.RateRounded) % (SecondsInMinute * FrameRate.RateRounded) % FrameRate.RateRounded;
             }
         }
 
@@ -110,8 +108,8 @@ namespace Timecode4net
             CalculateTotalFrames();
         }
 
-        public Timecode(TimeSpan timespan, FrameRate frameRate) 
-            : this((int)Math.Ceiling(timespan.TotalSeconds * frameRate.RateRounded), frameRate)
+        public Timecode(TimeSpan timespan, FrameRate frameRate)
+            : this((int)Math.Floor((timespan.TotalSeconds * frameRate.RateRounded) + (0.01 * frameRate.Rate)), frameRate)
         {
 
         }
@@ -119,12 +117,12 @@ namespace Timecode4net
         public override string ToString()
         {
             var frameSeparator = IsDropFrameRate ? ";" : ":";
-            return $"{this.Hours:D2}:{this.Minutes:D2}:{this.Seconds:D2}{frameSeparator}{this.Frames:D2}";
+            return $"{Hours:D2}:{Minutes:D2}:{Seconds:D2}{frameSeparator}{Frames:D2}";
         }
 
         public TimeSpan ToTimeSpan()
         {
-            var framesInMilliseconds = this.TotalFrames * MillisecondsInSecond / this.FrameRate.RateRounded;
+            var framesInMilliseconds = TotalFrames * MillisecondsInSecond / FrameRate.RateRounded;
             return TimeSpan.FromMilliseconds(framesInMilliseconds);
         }
 
@@ -144,7 +142,7 @@ namespace Timecode4net
                 frames -= dropFrames;
             }
 
-            TotalFrames = (int) Math.Floor(frames);
+            TotalFrames = (int)Math.Floor(frames);
         }
     }
 }
