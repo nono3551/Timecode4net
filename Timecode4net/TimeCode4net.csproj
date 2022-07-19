@@ -10,6 +10,11 @@
     <PackageProjectUrl>https://github.com/ailen0ada/Timecode4net</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>SMPTE</PackageTags>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="xunit.abstractions" Version="2.0.3" />
+  </ItemGroup>
 
 </Project>
