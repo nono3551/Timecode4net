@@ -109,7 +109,7 @@ namespace Timecode4net
         }
 
         public Timecode(TimeSpan timespan, FrameRate frameRate)
-            : this((int)Math.Floor((timespan.TotalSeconds * frameRate.RateRounded) + (0.01 * frameRate.Rate)), frameRate)
+            : this((int)Math.Floor((timespan.TotalSeconds * frameRate.RateRounded) + (0.001 * frameRate.Rate)), frameRate)
         {
 
         }
