@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoTimecode", "Timecode4net\VideoTimecode.csproj", "{62AB52C0-D9FB-4D1F-BDE0-15F9959DE0D0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoTimecode", "VideoTimecode\VideoTimecode.csproj", "{62AB52C0-D9FB-4D1F-BDE0-15F9959DE0D0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoTimecode.Tests", "Timecode4net.Tests\VideoTimecode.Tests.csproj", "{C58A7B87-4AAB-47A7-A33E-54E6EC6914A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoTimecode.Tests", "VideoTimecode.Tests\VideoTimecode.Tests.csproj", "{C58A7B87-4AAB-47A7-A33E-54E6EC6914A6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9A9472B7-1C9B-4856-81A4-C1BD4BF372D6}"
 	ProjectSection(SolutionItems) = preProject
