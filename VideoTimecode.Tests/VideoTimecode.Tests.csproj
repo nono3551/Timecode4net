@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Timecode4net\VideoTimecode.csproj" />
+    <ProjectReference Include="..\VideoTimecode\VideoTimecode.csproj" />
   </ItemGroup>
 
 </Project>
