@@ -24,7 +24,7 @@ namespace Timecode4net
         public string Name { get; set; }
         public int DropFramesCount { get; set; }
 
-        public FrameRate()
+        private FrameRate()
         {
 
         }
