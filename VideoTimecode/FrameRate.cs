@@ -24,7 +24,7 @@ namespace VideoTimecode
         public string Name { get; set; }
         public int DropFramesCount { get; set; }
 
-        private FrameRate()
+        public FrameRate()
         {
 
         }
