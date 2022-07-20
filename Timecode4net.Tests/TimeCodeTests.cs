@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace Timecode4net.Tests
+namespace VideoTimecode.Tests
 {
     public class TimecodeTests
     {

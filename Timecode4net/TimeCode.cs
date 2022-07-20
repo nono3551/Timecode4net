@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace Timecode4net
+namespace VideoTimecode
 {
     public class Timecode
     {

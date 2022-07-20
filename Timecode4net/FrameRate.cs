@@ -3,7 +3,7 @@ using Xunit.Abstractions;
 
 // ReSharper disable InconsistentNaming
 
-namespace Timecode4net
+namespace VideoTimecode
 {
     public class FrameRate : IXunitSerializable
     {
