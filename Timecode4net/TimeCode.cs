@@ -7,9 +7,10 @@ namespace Timecode4net
     {
         private const int SecondsInHour = 3600;
         private const int SecondsInMinute = 60;
+        private const int MinutesInHour = 60;
         private const int MillisecondsInSecond = 1000;
         private const int HoursInDay = 24;
-        private const double Imposter = 0.066666f;
+        private const int EveryTenMinute = 10;
 
         private const string TimeCodePattern = @"^(?<hours>[0-2][0-9]):(?<minutes>[0-5][0-9]):(?<seconds>[0-5][0-9])[:|;|\.](?<frames>[0-9]{2,3})$";
 
@@ -28,13 +29,13 @@ namespace Timecode4net
             if (IsDropFrameRate)
             {
                 var fps = FrameRate.Rate;
-                var dropFrames = Math.Round(fps * Imposter, MidpointRounding.AwayFromZero);
+                var dropFrames = FrameRate.DropFramesCount;
                 var framesPerHour = Math.Round(fps * SecondsInHour, MidpointRounding.AwayFromZero);
                 var framesPer24H = framesPerHour * HoursInDay;
-                var framesPer10M = Math.Round(fps * SecondsInMinute * 10, MidpointRounding.AwayFromZero);
+                var framesPer10M = Math.Round(fps * SecondsInMinute * EveryTenMinute, MidpointRounding.AwayFromZero);
                 var framesPerMin = Math.Round(fps * SecondsInMinute, MidpointRounding.AwayFromZero);
 
-                frameCount %= (int)framesPer24H;
+                frameCount %= (int) framesPer24H;
                 if (frameCount < 0)
                 {
                     frameCount = (int)(framesPer24H + frameCount);
@@ -108,10 +109,20 @@ namespace Timecode4net
             CalculateTotalFrames();
         }
 
-        public Timecode(TimeSpan timespan, FrameRate frameRate)
-            : this((int)Math.Floor((timespan.TotalSeconds * frameRate.RateRounded) + (0.001 * frameRate.Rate)), frameRate)
+        public Timecode(TimeSpan timespan, FrameRate frameRate, bool ceiling = true)
         {
+            FrameRate = frameRate;
 
+            if (ceiling)
+            {
+                TotalFrames = (int) Math.Ceiling(timespan.TotalMilliseconds * frameRate.Rate) / MillisecondsInSecond;
+            }
+            else
+            {
+                TotalFrames = (int) Math.Floor(timespan.TotalMilliseconds * frameRate.Rate) / MillisecondsInSecond;
+            }
+
+            UpdateByTotalFrames();
         }
 
         public override string ToString()
@@ -122,7 +133,7 @@ namespace Timecode4net
 
         public TimeSpan ToTimeSpan()
         {
-            var framesInMilliseconds = TotalFrames * MillisecondsInSecond / FrameRate.RateRounded;
+            var framesInMilliseconds = TotalFrames * MillisecondsInSecond / FrameRate.Rate;
             return TimeSpan.FromMilliseconds(framesInMilliseconds);
         }
 
@@ -136,8 +147,8 @@ namespace Timecode4net
 
             if (IsDropFrameRate)
             {
-                var totalMinutes = Hours * 60 + Minutes;
-                totalMinutes -= totalMinutes / 10;
+                var totalMinutes = Hours * MinutesInHour + Minutes;
+                totalMinutes -= totalMinutes / EveryTenMinute;
                 var dropFrames = totalMinutes * FrameRate.DropFramesCount;
                 frames -= dropFrames;
             }
