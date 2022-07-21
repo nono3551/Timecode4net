@@ -3,8 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<PackageId>VideoTimecode</PackageId>
-		<PackageVersion>1.0.0</PackageVersion>
-		<Version>1.0.0</Version>
+		<Version>1.0.1</Version>
 		<Title>VideoTimecode</Title>
 		<Authors>Michal Záhradník</Authors>
 		<Description>VideoTimecode is library for SMTPE timecode calculation. It is originally forked from Timecode4net.</Description>

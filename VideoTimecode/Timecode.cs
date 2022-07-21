@@ -5,6 +5,10 @@ namespace VideoTimecode
 {
     public class Timecode
     {
+        public const string FramesSeparatorDot = ".";
+        public const string FramesSeparatorSemiColon = ".";
+        public const string FramesSeparatorColon = ".";
+
         private const int SecondsInHour = 3600;
         private const int SecondsInMinute = 60;
         private const int MinutesInHour = 60;
@@ -80,6 +84,11 @@ namespace VideoTimecode
         {
             var frameSeparator = IsDropFrameRate ? ";" : ":";
             return $"{Hours:D2}:{Minutes:D2}:{Seconds:D2}{frameSeparator}{Frames:D2}";
+        }
+
+        public string ToString(string framesSeparator)
+        {
+            return $"{Hours:D2}:{Minutes:D2}:{Seconds:D2}{framesSeparator}{Frames:D2}";
         }
 
         public TimeSpan ToTimeSpan()
